@@ -9,7 +9,7 @@ Therefore, I survey most US university VLSI laboratory, chose Greatest Common Di
 
 This project is modified form [chisel-template project](https://github.com/ucb-bar/chisel-template), but fix chisel3 version to old `3.0-SNAPSHOT` in `build.sbt` for behavioral model simulation. Because the newer `3.0.+` leads to large un-initialized error in Verilator.
 
-Adhere, we are talking about how to building GCD module in this repo. If you are interesting how I choose these material and implementation in detail, please reference [my development notes]().
+Adhere, we are talking about how to building GCD module in this repo. If you are interesting how I choose these material and implementation in detail, please reference [my development notes](https://watz0n.github.io/blog/en-post/2018/01/10/learn-rv32i-series-en.html).
 
 Setup Chisel3 Build Environment
 ===
@@ -53,7 +53,7 @@ export PATH=$PATH:$VERILATOR_ROOT/bin
 Get the repo.
 ===
 ```bash
-git clone https://github.com/watz0n/chisel3-gcd.git
+git clone https://github.com/watz0n/learn-chisel3-gcd.git
 cd chisel3-gcd
 ```
 
@@ -123,6 +123,48 @@ There is a more strong cleaner, not only clean meta-data, but also clean compile
 bash clear-deep.sh
 ```
 
+Debug by Value Change Dump (VCD) File
+===
+
+Different tester has different directory structure, but all things are under `./test_run_dir`.
+
+Use BasicTester
+---
+For example:
+```bash
+# Execute
+sbt "testOnly *behav.GCDBehavBasicSpec"
+#...
+# Verilog code would be
+./test_run_dir/GCDBehavBasicTester/20180110...07560892/GCDBehavBasicTester.v
+# Verilog VCD File would be
+./test_run_dir/GCDBehavBasicTester/20180110...07560892/dump.vcd
+```
+* GCDBehavBasicTester : class name extends from BasicTester
+* 20180110...07560892 : Date and random seed for Verilator
+* GCDBehavBasicTester.v : class name extends from BasicTester
+
+Different test would have different directory.
+
+Use PeekPokeTester
+---
+For example:
+```bash
+# Execute
+sbt "testOnly *behav.GCDBehavPeekPokeSpec"
+#...
+# Verilog code would be
+./test_run_dir/behav.GCDBehavPeekPokeSpec421013385/gcd_behav.v
+# Verilog VCD File would be
+./test_run_dir/behav.GCDBehavPeekPokeSpec421013385/gcd_behav.vcd
+```
+* behav : unit-test package name
+* GCDBehavPeekPokeSpec : unit-test class name
+* 421013385 : random seed for Verilator
+* gcd_behav : the Module class name in unit-test
+
+All test use same directory, result would be overwrite by next test. But it would stop on error for our debug.
+
 Learning Material
 ===
 
@@ -146,4 +188,5 @@ FAQs
 *Hey! You have some typo or something wrong! Where are you?*
 * Directly use issue or pull request
 * E-Mail: watz0n.tw@gmail.com
-* Website: TBD
+* Website: https://blog.watz0n.tech/
+* Backup: https://watz0n.github.io/
